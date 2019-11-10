@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
 //https://www.callicoder.com/java-read-excel-file-apache-poi/
 public class Main {
@@ -34,7 +35,7 @@ public class Main {
         if (string == null || string.length() == 0) {
             return string;
         }
-        char c[] = string.toCharArray();
+        char[] c = string.toCharArray();
         c[0] = Character.toLowerCase(c[0]);
         return new String(c);
     }
@@ -51,22 +52,20 @@ public class Main {
     }
 
     //TODO: Recursive Action
-    private static void process(String[][] data,int n,int m,String[] relations){
-        int i,j;
-        for (i = 0; i < n; ++i){
-            for(j=0;j<m;++j){
-                if (data[i][j].contains(" ")||data[i][j].contains("+")||data[i][j].contains("@")) {
-                    data[i][j] = "\"" + data[i][j] + "\"";
-                } else {
-                    data[i][j] = data[i][j].toLowerCase();
-                }
-                data[i][j]=relations[i]+"("+CRNs[j]+","+data[i][j]+").";
-            }
-        }
-    }
+//    private static void process(String[][] data,int n,int m,String[] relations){
+//        int i,j;
+//        for (i = 0; i < n; ++i){
+//            for(j=0;j<m;++j){
+//                if (data[i][j].contains(" ")||data[i][j].contains("+")||data[i][j].contains("@")) {
+//                    data[i][j] = "\"" + data[i][j] + "\"";
+//                } else {
+//                    data[i][j] = data[i][j].toLowerCase();
+//                }
+//                data[i][j]=relations[i]+"("+CRNs[j]+","+data[i][j]+").";
+//            }
+//        }
+//    }
     public static void main(String[] args) throws IOException, InvalidFormatException {
-
-
         int[] rows_to_read = new int[]{7,19,20};
         int n_rows_to_read =rows_to_read.length;
         String[] relations = new String[n_rows_to_read];
@@ -93,7 +92,11 @@ public class Main {
         }
 
         //process data
-        process(data,n_rows_to_read,sheet.getLastRowNum(),relations);
+        Process p = new Process(0,sheet.getLastRowNum(),n_rows_to_read,data,relations,CRNs);
+        ForkJoinPool pool = new ForkJoinPool();
+        pool.invoke(p);
+        pool.shutdown();
+        //process(data,n_rows_to_read,sheet.getLastRowNum(),relations);
 
         //write
         for (i = 0; i < n_rows_to_read; ++i){
