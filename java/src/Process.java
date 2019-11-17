@@ -1,3 +1,8 @@
+/*
+ * Joaquin Herrera Ramos A01207504
+ * November 2019
+ * Programming Languages - Final project
+ * */
 import java.util.concurrent.RecursiveAction;
 
 public class Process extends RecursiveAction {
@@ -16,8 +21,11 @@ public class Process extends RecursiveAction {
         this.id_list = id_list;
     }
 
+
+
     private void computeDirectly(){
         int i,j;
+        String aux="";
         for (i = 0; i < n_rows_to_read; ++i){
             for(j=start;j<end;++j){
                 if(data[i][j].matches("^[a-zA-Z0-9]+$")){
