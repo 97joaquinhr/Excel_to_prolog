@@ -658,7 +658,7 @@ nomina_Amaternop(l084051,"Ordóñez").
 nomina_Amaternop(l087980,venegas).
 nomina_Amaternop(l65073,"Ortíz").
 nomina_Amaternop(l492254,"González").
-nomina_Amaternop(l021876,"Ramírez").
+nomina_Amaternop(l021876,"Ramírez"
 nomina_Amaternop(l29123,"López").
 nomina_Amaternop(l331650,"García").
 nomina_Amaternop(l020792,"Fernández").

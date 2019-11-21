@@ -21,3 +21,6 @@ cursos(Nomina,X):-
     cursosH(Aux,[],X).
     /*findall(Curso,crn_NombreMateria(CRN,Curso),X).*/
 
+cursos_en_salon(Salon,X):-
+    findall(CRN,crn_Sal1(CRN,Salon),Aux),
+    cursosH(Aux,[],X).
