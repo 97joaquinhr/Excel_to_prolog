@@ -27,11 +27,17 @@ Inside of the info folder, there is an example of what kind of Excel books my pr
 Inside of the java folder you can find my source code, which is composed of 2 files: Main and Process. Main defines several methods that make possible the reading and writing parts of the project and Process handles the concurrent processing of strings to make the relationships.
 Inside of java/excel/ there is a file called pom.xml. A Project Object Model or POM is the fundamental unit of work in Maven. It is an XML file that contains information about the project and configuration details used by Maven to build the project (Apache Maven Project, 2019). In this file I define “org.apache.poi” as a dependency for reading an Excel file. There are other dependencies defined as well.
 The setup instructions consist of the following:
-1. In the Main.java file, change the variable XLSX_FILE_PATH to match the Excel file you want to process.
-1. The variable declared inside of Main are defined to work with the Proyecto.xlsx file. For the program to work, you have to define three variables: the name of the id, which is going to be used to create all relationships, the row inside of the spreadsheet that contains the unique identifiers, and the number for the rows to process (zero-based).
-1. After that, make sure that the other variables match. You can process as many rows per id as you want, but if you want to run several ids, you have to duplicate the methods called: create_relations,add_headers,read_data, process, and prepare_data. 
-1. Make sure to change the path of the variable output_path. This will be the PL file that will contain the knowledge base.
-1. Now run the program.
+Run the program and follow the menu:
+1. Provide the excel file path.
+1. Provide the PL file path.
+1. Provide how many IDs you want to process and repeat the following for each:
+	1. Provide the row that contains the unique identifiers.
+	1. Provide the name of the unique identifiers.
+	1. Provide the number of rows to read for this ID.
+	1. Provide the number of each row to read (as many as the number provided in the step above).
+1. Wait for results.
+1. Check the results on the path of the PL file provided.
+
 I created some rules inside of my queries.pl file to demonstrate how to use a separate prolog knowledge base. 
 
 ## References
