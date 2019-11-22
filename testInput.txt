@@ -1,0 +1,11 @@
+C:\Users\joaqu\Documents\Codigo\Excel_to_prolog\info\Proyecto.xlsx
+C:\Users\joaqu\Documents\Codigo\Excel_to_prolog\info\data.pl
+2
+5
+crn
+6
+7 19 20 21 24 29
+29
+nomina
+5
+31 32 33 34 36
