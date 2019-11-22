@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -21,63 +22,82 @@ import java.util.concurrent.ForkJoinPool;
  * as reference for the Apache POI usage.
  */
 public class Main {
-    private static final String XLSX_FILE_PATH = "C:\\Users\\joaqu\\Documents\\Codigo\\Excel_to_prolog\\info\\Proyecto.xlsx";
     private static Workbook workbook;
     private static List<String> lines= new ArrayList<String>();
     private static DataFormatter dataFormatter = new DataFormatter();
-    static {
-        try {
-            workbook = WorkbookFactory.create(new File(XLSX_FILE_PATH));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    private static Sheet sheet = workbook.getSheetAt(0);
-    private static int n_rows = sheet.getLastRowNum();
+
+    private static Sheet sheet;
+    private static int n_rows;
 
     public static void main(String[] args) throws IOException, InvalidFormatException {
-        String output_path = "C:\\Users\\joaqu\\Documents\\Codigo\\Excel_to_prolog\\info\\data.pl";
+        String output_path;
         //crn with group information
         String id_crn="crn";
-        int crn_row = 5;
-        int[] crn_rows_to_read = new int[]{7,19,20,21,24,29};
-        int crn_n_rows_to_read =crn_rows_to_read.length;
-        String[][] crn_data = new String[crn_n_rows_to_read][n_rows];
-        String[] crn_relations = new String[crn_n_rows_to_read];
-        String[] CRNs = new String[n_rows];
-
-        //nomina with teacher's info
-        String id_nomina="nomina";
-        int nomina_row = 29;
-        int[] nomina_rows_to_read = new int[]{31,32,33,34,36};
-        int nomina_n_rows_to_read =nomina_rows_to_read.length;
-        String[][] nomina_data = new String[nomina_n_rows_to_read][n_rows];
-        String[] nomina_relations = new String[nomina_n_rows_to_read];
-        String[] NOMINAs = new String[n_rows];
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Path of Excel file to read?");
+        String excel_file_path = scanner.next();
+        try {
+            workbook = WorkbookFactory.create(new File(excel_file_path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        sheet = workbook.getSheetAt(0);
+        n_rows  = sheet.getLastRowNum();
+        System.out.println("Path of PL file to write?");
+        output_path = scanner.next();
+        System.out.println("How many IDs do you want to process?");
+        int ids = scanner.nextInt();
+        int i,j;
+        int[] id_rows = new int[ids];
+        String[] id_names = new String[ids];
+        int[] n_rows_to_read = new int[ids];
+        int MAX = 1000;
+        int [][] rows_to_read = new int[ids][MAX];
+        for (i = 0;i<ids;i++){
+            System.out.println("Row of ID #"+i);
+            id_rows[i] = scanner.nextInt();
+            System.out.println("Name of ID #"+i);
+            id_names[i] = scanner.next();
+            System.out.println("N of Rows to read of ID #"+i);
+            n_rows_to_read[i] = scanner.nextInt();
+            System.out.println("Rows to read of ID #"+i);
+            for (j = 0;j<n_rows_to_read[i];j++){
+                rows_to_read[i][j]= scanner.nextInt();
+            }
+        }
+        String [][][] data = new String[ids][MAX][n_rows];
+        String [][] relations = new String[ids][MAX];
+        String [][] ids_list = new String[ids][n_rows];
 
         lines.add("/*Joaquin Herrera Ramos A01207504 \n November 2019 " +
                 "\n Programming Languages - Final Project */");
         lines.add(":- encoding(utf8).");
 
-        create_relations(crn_rows_to_read,crn_relations,crn_n_rows_to_read,id_crn);
-        add_headers(crn_n_rows_to_read, crn_relations);
-        read_data(crn_rows_to_read, crn_n_rows_to_read, crn_data, CRNs, crn_row);
-
-        create_relations(nomina_rows_to_read,nomina_relations,nomina_n_rows_to_read,id_nomina);
-        add_headers(nomina_n_rows_to_read, nomina_relations);
-        read_data(nomina_rows_to_read, nomina_n_rows_to_read, nomina_data, NOMINAs, nomina_row);
+        System.out.println("Reading data");
+        for (i = 0;i<ids;i++) {
+            create_relations(rows_to_read[i],relations[i],n_rows_to_read[i],id_names[i]);
+            add_headers(n_rows_to_read[i], relations[i]);
+            read_data(rows_to_read[i], n_rows_to_read[i], data[i], ids_list[i], id_rows[i]);
+        }
 
         //process data
-        Process p_crns = new Process(0,n_rows,crn_n_rows_to_read,crn_data,crn_relations,CRNs);
-        Process p_nominas = new Process(0,n_rows,nomina_n_rows_to_read,nomina_data,nomina_relations,NOMINAs);
-        //Create ForkJoinPool
+        System.out.println("Processing data");
+        Process[] p = new Process[ids];
+        for (i = 0;i<ids;i++) {
+            p[i] = new Process(0,n_rows,n_rows_to_read[i],data[i],relations[i],ids_list[i]);
+        }
         ForkJoinPool pool = new ForkJoinPool();
-        pool.invoke(p_crns);
-        pool.invoke(p_nominas);
+        for (i = 0;i<ids;i++) {
+            pool.invoke(p[i]);
+        }
+        //Create ForkJoinPool
+        System.out.println("Preparing data");
         pool.shutdown();
-
-        prepare_data(crn_n_rows_to_read, crn_data);
-        prepare_data(nomina_n_rows_to_read, nomina_data);
+        for (i = 0;i<ids;i++) {
+            prepare_data(n_rows_to_read[i], data[i]);
+        }
+        System.out.println("Writing data");
         write_data(output_path);
 
     }
