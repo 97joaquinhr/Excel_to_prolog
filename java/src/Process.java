@@ -12,6 +12,15 @@ public class Process extends RecursiveAction {
     private String[] relations;
     private String[] id_list;
 
+    /**
+     *
+     * @param start integer that marks the start
+     * @param end integer that marks the end
+     * @param n_rows_to_read number of rows to be read
+     * @param data 2D array containing the data from the Excel file
+     * @param relations id+row_name
+     * @param id_list ids to be matched with the data and relations
+     */
     Process(int start, int end, int n_rows_to_read, String[][] data, String[] relations, String[] id_list) {
         this.start = start;
         this.end = end;
@@ -22,7 +31,9 @@ public class Process extends RecursiveAction {
     }
 
 
-
+    /**
+     * Iterate through data to process the string and create the relation.
+     */
     private void computeDirectly(){
         int i,j;
         String aux="";
@@ -38,6 +49,9 @@ public class Process extends RecursiveAction {
         }
     }
 
+    /**
+     * Divide in subproblems.
+     */
     @Override
     protected void compute(){
         if (end-start<THRESHOLD){
