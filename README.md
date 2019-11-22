@@ -26,6 +26,7 @@ If I were to continue working on this project, I would even think about using a 
 Inside of the info folder, there is an example of what kind of Excel books my program accepts and an example of output in data.pl. 
 Inside of the java folder you can find my source code, which is composed of 2 files: Main and Process. Main defines several methods that make possible the reading and writing parts of the project and Process handles the concurrent processing of strings to make the relationships.
 Inside of java/excel/ there is a file called pom.xml. A Project Object Model or POM is the fundamental unit of work in Maven. It is an XML file that contains information about the project and configuration details used by Maven to build the project (Apache Maven Project, 2019). In this file I define “org.apache.poi” as a dependency for reading an Excel file. There are other dependencies defined as well.
+
 The setup instructions consist of the following:
 Run the program and follow the menu:
 1. Provide the excel file path.
